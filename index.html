@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .title {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-container input {
+            padding: 10px;
+            font-size: 1em;
+            width: 80%;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-container button {
+            padding: 10px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .input-container button:hover {
+            background-color: #45a049;
+        }
+        .weather-info {
+            margin-top: 20px;
+        }
+        .weather-info p {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="title">Weather App</div>
+        <div class="input-container">
+            <input type="text" id="city" placeholder="Enter city name">
+            <button onclick="getWeather()">Get Weather</button>
+        </div>
+
+        <div class="weather-info" id="weather-info"></div>
+    </div>
+
+    <script>
+        // Function to fetch weather data from the API
+        async function getWeather() {
+            const city = document.getElementById('city').value;
+            if (!city) {
+                alert('Please enter a city name.');
+                return;
+            }
+
+            const apiKey = '0066831160af4a5fb4263254252403';
+            const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=yes`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                // Check if the city exists in the API response
+                if (data.error) {
+                    alert(data.error.message);
+                    return;
+                }
+
+                // Display weather information
+                const weatherInfo = `
+                    <p><strong>City:</strong> ${data.location.name}, ${data.location.country}</p>
+                    <p><strong>Temperature:</strong> ${data.current.temp_c}°C</p>
+                    <p><strong>Condition:</strong> ${data.current.condition.text}</p>
+                    <p><strong>Wind Speed:</strong> ${data.current.wind_kph} km/h</p>
+                    <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
+                    <p><strong>Air Quality Index (AQI):</strong> ${data.current.air_quality['us-epa-index']}</p>
+                `;
+                document.getElementById('weather-info').innerHTML = weatherInfo;
+
+            } catch (error) {
+                alert('An error occurred while fetching the weather data.');
+                console.error(error);
+            }
+        }
+    </script>
+
+</body>
+</html>
+
